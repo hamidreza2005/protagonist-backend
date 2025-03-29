@@ -17,7 +17,7 @@ services:
     networks:
       - protagonist
     volumes:
-      - "./:/app"
+      - ".:/app"
     environment:
       - FLASK_ENV=development
       - MYSQL_HOST=mysql

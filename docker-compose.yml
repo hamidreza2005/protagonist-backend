@@ -1,0 +1,47 @@
+networks:
+  protagonist:
+    driver: bridge
+
+volumes:
+    mysql_data:
+        driver: local
+services:
+  app:
+    container_name: protagonist-flask
+    build: .
+    ports:
+      - "5000:5000"
+    depends_on:
+      - mysql
+      - redis
+    networks:
+      - protagonist
+    volumes:
+      - "./:/app"
+    environment:
+      - FLASK_ENV=development
+      - MYSQL_HOST=mysql
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=root
+      - MYSQL_DATABASE=flask_db
+
+  mysql:
+    container_name: protagonist-mysql
+    image: mysql:8.0
+    networks:
+      - protagonist
+    volumes:
+      - "mysql_data:/var/lib/mysql"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: flask_db
+    ports:
+      - "3306:3306"
+
+  redis:
+    container_name: protagonist-redis
+    image: redis:6.2.5-alpine
+    networks:
+      - protagonist
+    ports:
+      - "6379:6379"

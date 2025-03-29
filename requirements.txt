@@ -1,0 +1,8 @@
+flask
+flask-mysql 
+redis
+flask_sqlalchemy
+flask_migrate
+flask_jwt_extended
+flast_bcrypt
+mysql-connector-python

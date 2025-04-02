@@ -13,6 +13,7 @@ def register():
     user = User(username=data["username"], password=password,role = UserRole.USER)
     db.session.add(user)
     db.session.commit()
+    
     return jsonify({"message": "User created"}), 201
 
 @auth_bp.route("/login", methods=["POST"])
@@ -20,7 +21,9 @@ def login():
     data = request.get_json()
     hashed_password = bcrypt.generate_password_hash(data['password']).decode('utf-8')
     user = User.query.filter_by(username=data["username"]).first()
-    if not user or user.password != hashed_password:
+
+    if not user or not bcrypt.check_password_hash(user.password, data['password']):
         return jsonify({"message": "Invalid credentials"}), 401
+    
     access_token = create_access_token(identity=user.id)
     return jsonify(access_token=access_token)

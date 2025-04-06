@@ -4,13 +4,13 @@ from app import create_app
 app = create_app()
 
 
-# @app.errorhandler(Exception)
-# def handle_exception(e):
-#     response = {
-#         "error": str(e),
-#         "message": "An unexpected error occurred."
-#     }
-#     return jsonify(response), 500
+@app.errorhandler(Exception)
+def handle_exception(e):
+    response = {
+        "error": str(e),
+        "message": "An unexpected error occurred."
+    }
+    return jsonify(response), 500
     
 
 if __name__ == "__main__":

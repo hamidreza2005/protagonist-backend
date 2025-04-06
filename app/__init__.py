@@ -2,6 +2,7 @@ from flask import Flask, jsonify
 from app.config import DevelopmentConfig
 from app.extensions import db, migrate, jwt
 from app.controllers.auth import auth_bp
+from app.extensions import bcrypt
 
 def create_app():
     app = Flask(__name__)
@@ -10,7 +11,8 @@ def create_app():
     db.init_app(app)
     migrate.init_app(app, db)
     jwt.init_app(app)
-    
-    app.register_blueprint(auth_bp, url_prefix="/auth")
+    bcrypt.init_app(app)  
 
+    app.register_blueprint(auth_bp, url_prefix="/auth")
     return app
+

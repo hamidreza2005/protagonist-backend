@@ -1,42 +1,56 @@
+version: "3.8"
+
 networks:
   protagonist:
     driver: bridge
 
 volumes:
-    mysql_data:
-        driver: local
-services:
-  app:
-    container_name: protagonist-flask
-    build: .
-    ports:
-      - "5000:5000"
-    depends_on:
-      - mysql
-      - redis
-    networks:
-      - protagonist
-    volumes:
-      - ".:/app"
-    environment:
-      - FLASK_ENV=development
-      - MYSQL_HOST=mysql
-      - MYSQL_USER=root
-      - MYSQL_PASSWORD=root
-      - MYSQL_DATABASE=flask_db
+  mysql_data:
+    driver: local
 
+services:
   mysql:
     container_name: protagonist-mysql
     image: mysql:8.0
     networks:
       - protagonist
     volumes:
-      - "mysql_data:/var/lib/mysql"
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: flask_db
+      - mysql_data:/var/lib/mysql
     ports:
       - "3308:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=flask_db
+      - MYSQL_USER=appuser
+      - MYSQL_PASSWORD=apppass
+      - MYSQL_ROOT_HOST=%
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    container_name: protagonist-flask
+    build: .
+    ports:
+      - "5000:5000"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks:
+      - protagonist
+    volumes:
+      - ".:/app"
+    environment:
+      - FLASK_ENV=development
+      - FLASK_APP=run.py
+      - MYSQL_HOST=mysql
+      - MYSQL_USER=appuser
+      - MYSQL_PASSWORD=apppass
+      - MYSQL_DATABASE=flask_db
 
   redis:
     container_name: protagonist-redis

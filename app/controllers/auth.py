@@ -27,11 +27,21 @@ def login():
     if not user or not bcrypt.check_password_hash(user.password, data['password']):
         return jsonify({"message": "Invalid credentials"}), 401
 
+    remember = data.get("remember", False)
+    expires = timedelta(days=30 if remember else 1)
     additional_claims = {"role": user.role.value}
-    expires = timedelta(days=30 if data.get("remember") else 1)
-    access_token = create_access_token(identity=str(user.id), additional_claims=additional_claims, expires_delta=expires)
-    response = jsonify({"message": "Login successful"})
-    set_access_cookies(response, access_token)
+
+    access_token = create_access_token(
+        identity=str(user.id),
+        additional_claims=additional_claims,
+        expires_delta=expires
+    )
+
+    response = jsonify({
+        "message": "Login successful",
+        "remember": remember
+    })
+    set_access_cookies(response, access_token, max_age=expires.total_seconds())
     return response
 
 

@@ -19,13 +19,7 @@ def list_posts():
 @posts_bp.route("/<int:post_id>", methods=["GET"])
 def get_post(post_id):
     p = Post.query.options(joinedload(Post.author)).get_or_404(post_id)
-    return jsonify({
-        "id": p.id,
-        "title": p.title,
-        "content": p.content,
-        "created_at": p.created_at.isoformat(),
-        "author_id": p.author_id
-    }), 200
+    return jsonify(p.toResource()), 200
 
 @posts_bp.route("", methods=["POST"])
 @jwt_required()

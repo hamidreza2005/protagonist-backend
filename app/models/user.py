@@ -12,6 +12,6 @@ class User(db.Model):
     def toResource(self) -> dict:
         return {
             "id": self.id,
-            "title": self.username,
+            "username": self.username,
             "role": str(self.role),
         }

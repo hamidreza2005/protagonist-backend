@@ -9,6 +9,13 @@ class User(db.Model):
     password = db.Column(db.String(255), nullable=False)
     role = db.Column(Enum(UserRole), nullable=False, default=UserRole.USER)
 
+    
+    posts = db.relationship(
+        'Post',
+        back_populates='author',
+        passive_deletes=True
+    )
+
     def toResource(self) -> dict:
         return {
             "id": self.id,

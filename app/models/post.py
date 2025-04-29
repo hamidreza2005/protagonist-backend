@@ -7,9 +7,12 @@ class Post(db.Model):
     title = db.Column(db.String(255), nullable=False)
     content = db.Column(db.Text, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.now)
-    author_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    author_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False, passive_deletes=True)
 
-    author = db.relationship("User", backref="posts")
+    author = db.relationship(
+        'User',
+        back_populates='posts'
+    )
 
     def toResource(self) -> dict:
         return {

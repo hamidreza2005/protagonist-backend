@@ -47,10 +47,20 @@ def login():
 
     return response
 
-
 @auth_bp.route("/logout", methods=["POST"])
 @jwt_required()
 def logout():
     response = jsonify({"message": "Logged out"})
     unset_jwt_cookies(response)
     return response
+
+@auth_bp.route("/me", methods=["GET"])
+@jwt_required()
+def identify_me():
+    user_id = get_jwt_identity()
+    user = User.query.get_or_404(user_id)
+    return jsonify({
+        "id": user.id,
+        "username": user.username,
+        "role": user.role.value
+    }), 200

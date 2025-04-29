@@ -39,9 +39,12 @@ def login():
 
     response = jsonify({
         "message": "Login successful",
-        "remember": remember
+        "data": {
+            "token" : access_token,
+            "expires": expires.total_seconds()
+        }
     })
-    set_access_cookies(response, access_token, max_age=expires.total_seconds())
+
     return response
 
 

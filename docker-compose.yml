@@ -1,5 +1,3 @@
-version: "3.8"
-
 networks:
   protagonist:
     driver: bridge
@@ -38,8 +36,6 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
-      redis:
-        condition: service_started
     networks:
       - protagonist
     volumes:
@@ -51,11 +47,3 @@ services:
       - MYSQL_USER=appuser
       - MYSQL_PASSWORD=apppass
       - MYSQL_DATABASE=flask_db
-
-  redis:
-    container_name: protagonist-redis
-    image: redis:6.2.5-alpine
-    networks:
-      - protagonist
-    ports:
-      - "6379:6379"

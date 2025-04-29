@@ -1,27 +1,24 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, current_app
 from app.extensions import db
 from app.models.post import Post
+from app.models.user import User
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.enums.userRole import UserRole
+from sqlalchemy.orm import joinedload
 
 posts_bp = Blueprint("posts", __name__)
 
 @posts_bp.route("", methods=["GET"])
 def list_posts():
-    posts = Post.query.order_by(Post.created_at.desc()).all()
+    posts = Post.query.options(joinedload(Post.author)).order_by(Post.created_at.desc()).all()
+    current_app.logger.info(posts[0].toResource())
     return jsonify([
-        {
-            "id": p.id,
-            "title": p.title,
-            "content": p.content,
-            "created_at": p.created_at.isoformat(),
-            "author_id": p.author_id
-        } for p in posts
+        p.toResource() for p in posts
     ]), 200
 
 @posts_bp.route("/<int:post_id>", methods=["GET"])
 def get_post(post_id):
-    p = Post.query.get_or_404(post_id)
+    p = Post.query.options(joinedload(Post.author)).get_or_404(post_id)
     return jsonify({
         "id": p.id,
         "title": p.title,
@@ -68,4 +65,4 @@ def delete_post(post_id):
 
     db.session.delete(p)
     db.session.commit()
-    return jsonify({"message": "Deleted"}), 200
+    return jsonify({"message": "Deleted"}), 204

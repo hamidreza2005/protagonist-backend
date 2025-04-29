@@ -31,6 +31,7 @@ services:
   app:
     container_name: protagonist-flask
     build: .
+    restart: unless-stopped
     ports:
       - "5000:5000"
     depends_on:

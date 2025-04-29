@@ -8,3 +8,10 @@ class User(db.Model):
     username = db.Column(db.String(80), unique=True, nullable=False)
     password = db.Column(db.String(255), nullable=False)
     role = db.Column(Enum(UserRole), nullable=False, default=UserRole.USER)
+
+    def toResource(self) -> dict:
+        return {
+            "id": self.id,
+            "title": self.username,
+            "role": str(self.role),
+        }

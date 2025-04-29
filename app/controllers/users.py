@@ -13,7 +13,7 @@ users_bp = Blueprint("users", __name__)
 def list_users():
     users = User.query.all()
     return jsonify([
-        {"id": u.id, "username": u.username, "role": u.role.value}
+        u.toResource()
         for u in users
     ]), 200
 
@@ -22,7 +22,7 @@ def list_users():
 @role_required(UserRole.ADMIN.value)
 def get_user(user_id):
     u = User.query.get_or_404(user_id)
-    return jsonify({"id": u.id, "username": u.username, "role": u.role.value}), 200
+    return jsonify(u.toResource()), 200
 
 @users_bp.route("/<int:user_id>", methods=["PUT"])
 @jwt_required()
@@ -44,4 +44,4 @@ def delete_user(user_id):
     u = User.query.get_or_404(user_id)
     db.session.delete(u)
     db.session.commit()
-    return jsonify({"message": "Deleted"}), 200
+    return jsonify({"message": "Deleted"}), 204

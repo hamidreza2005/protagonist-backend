@@ -1,6 +1,7 @@
 from flask import jsonify
 from app import create_app
 from flask_limiter.errors import RateLimitExceeded
+from sqlalchemy.orm.exc import NoResultFound
 
 app = create_app()
 
@@ -10,6 +11,13 @@ def ratelimit_handler(e):
         "error": "Too many requests",
         "message": str(e.description),
     }), 429
+
+@app.errorhandler(404)
+def ratelimit_handler(e):
+    return jsonify({
+        "error": "Not Found",
+        "message": "Not Found",
+    }), 404
 
 @app.errorhandler(Exception)
 def handle_exception(e):

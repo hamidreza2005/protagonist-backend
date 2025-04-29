@@ -30,6 +30,7 @@ def get_user(user_id):
 def update_user(user_id):
     u = User.query.get_or_404(user_id)
     data = request.get_json()
+    u.username = data["username"]
     if "password" in data:
         u.password = bcrypt.generate_password_hash(data["password"]).decode()
     if "role" in data and data["role"] in [r.value for r in UserRole]:

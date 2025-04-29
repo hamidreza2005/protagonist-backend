@@ -13,5 +13,5 @@ class User(db.Model):
         return {
             "id": self.id,
             "username": self.username,
-            "role": str(self.role),
+            "role": self.role.value,
         }

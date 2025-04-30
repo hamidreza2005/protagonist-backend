@@ -45,4 +45,4 @@ def delete_user(user_id):
     u = User.query.get_or_404(user_id)
     db.session.delete(u)
     db.session.commit()
-    return jsonify({"message": "Deleted"}), 204
+    return '', 204

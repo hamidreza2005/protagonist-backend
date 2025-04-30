@@ -23,7 +23,7 @@ def register():
         return jsonify({"message": "Password must be at least 4 characters long."}), 400
 
     if User.query.filter_by(username=username).first():
-        return jsonify({"message": "User already exists. Please login."}), 409
+        return jsonify({"message": "User already exists. Please login."}), 422
 
     hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
     user = User(username=username, password=hashed_password, role=UserRole.USER)

@@ -11,7 +11,6 @@ posts_bp = Blueprint("posts", __name__)
 @posts_bp.route("", methods=["GET"])
 def list_posts():
     posts = Post.query.options(joinedload(Post.author)).order_by(Post.created_at.desc()).all()
-    current_app.logger.info(posts[0].toResource())
     return jsonify([
         p.toResource() for p in posts
     ]), 200

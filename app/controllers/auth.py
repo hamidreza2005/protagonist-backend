@@ -36,6 +36,13 @@ def register():
 @limiter.limit("5/minute")
 def login():
     data = request.get_json()
+    if not data.get("username") and not data.get("username"):
+        return jsonify(
+            {
+                "data":[],
+                "message": "Bad Request"
+            }
+        ), 400
     user = User.query.filter_by(username=data["username"]).first()
 
     if not user or not bcrypt.check_password_hash(user.password, data['password']):

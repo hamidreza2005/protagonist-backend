@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify, current_app
-from app.extensions import db
+from app.extensions import db, limiter
 from app.models.post import Post
 from app.models.user import User
 from flask_jwt_extended import jwt_required, get_jwt_identity
@@ -9,6 +9,7 @@ from sqlalchemy.orm import joinedload
 posts_bp = Blueprint("posts", __name__)
 
 @posts_bp.route("", methods=["GET"])
+@limiter.limit("60/minute")
 def list_posts():
     posts = Post.query.options(joinedload(Post.author)).order_by(Post.created_at.desc()).all()
     return jsonify([
